@@ -27,16 +27,12 @@
 
   var slice = Array.prototype.slice;
 
-  function isDeferred(deferred) {
-    return $.isFunction(deferred.promise);
-  }
-
   /**
    * run deferreds collection of functions in parallel
    *
    * @param [function] deferreds
    * function return deferred
-   * 
+   *
    * @returns {promise}
    */
   $.parallel = function(deferreds) {
