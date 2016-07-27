@@ -30,7 +30,7 @@
   /**
    * run deferreds collection of functions in parallel
    *
-   * @param [function] deferreds
+   * @param {function} deferreds
    * function return deferred
    *
    * @returns {promise}
@@ -56,7 +56,7 @@
    * run deferreds collection of functions in series
    * each function consumes the return value of the previous function
    *
-   * @param [function] deferreds
+   * @param {function} deferreds
    * function return deferred
    *
    * @returns {promise}
