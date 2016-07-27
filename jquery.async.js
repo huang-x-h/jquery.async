@@ -63,7 +63,7 @@
    */
   $.series = function(deferreds) {
     if (!Array.isArray(deferreds)) {
-      deferreds = Array.prototype.slice.call(arguments);
+      deferreds = slice.call(arguments);
     }
 
     var defer = $.Deferred();
