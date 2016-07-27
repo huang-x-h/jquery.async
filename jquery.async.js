@@ -27,6 +27,10 @@
 
   var slice = Array.prototype.slice;
 
+  function isDeferred(obj) {
+    return typeof obj.promise === 'function';
+  }
+
   /**
    * run deferreds collection of functions in parallel
    *
@@ -56,22 +60,34 @@
    * run deferreds collection of functions in series
    * each function consumes the return value of the previous function
    *
-   * @param {function} deferreds
+   * @param {function|array} deferreds
+   * @param {object} initialValue
+   * when deferreds is array, initialValue is the first deferred function param
    * function return deferred
    *
    * @returns {promise}
    */
-  $.series = function(deferreds) {
+  $.series = function(deferreds, initialValue) {
     if (!Array.isArray(deferreds)) {
       deferreds = slice.call(arguments);
+      initialValue = '';
     }
 
     var defer = $.Deferred();
     var initDefer = $.Deferred();
     deferreds.reduce(function(prev, next) {
-      return prev.then(next, defer.reject);
+      return prev.then(function() {
+        var result = next.apply(null, slice.call(arguments));
+        if (isDeferred(result)) {
+          return result;
+        } else {
+          var newDefer = $.Deferred();
+          newDefer.resolve(result);
+          return newDefer.promise();
+        }
+      }, defer.reject);
     }, initDefer.promise()).then(defer.resolve, defer.reject);
-    initDefer.resolve('');
+    initDefer.resolve(initialValue);
 
     return defer.promise();
   };
