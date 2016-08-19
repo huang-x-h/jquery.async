@@ -34,6 +34,13 @@
   /**
    * run deferreds collection of functions in parallel
    *
+   * if deferred function success handler has more than one argument,
+   * it will only return the first argument
+   *
+   * because jQuery ajax success handler has three arguments,
+   * but users are focus the data returned from the server,
+   * so we just return the first argument
+   *
    * @param {function} deferreds
    * function return deferred
    *
@@ -50,7 +57,9 @@
 
     var defer = $.Deferred();
     $.when.apply(null, deferreds).done(function() {
-      defer.resolve(slice.call(arguments));
+      defer.resolve(slice.call(arguments).map(function(item) {
+        return Array.isArray(item) ? item[0] : item;
+      }));
     });
 
     return defer.promise();

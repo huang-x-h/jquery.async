@@ -96,10 +96,14 @@ defer.then(function(result) {
 ```
 
 ## API
-### `$.series(deferreds)`
+### `$.series(...deferreds)`
 
 run deferreds collection of functions in series, each function consumes the return value of the previous function
 
-### `$.parallel(deferreds)`
+### `$.series([deferreds], initialValue)`
+
+run as `$.series(...deferreds)`, but will set `initialValue` to first function as arguments
+
+### `$.parallel(...deferreds)`
 
 run deferreds collection of functions in parallel
