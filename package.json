@@ -1,16 +1,24 @@
 {
   "name": "jquery.async",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "add $.series/$.parallel function to control async flow in jquery",
   "main": "jquery.async.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["jquery", "async"],
+  "keywords": [
+    "jquery",
+    "async"
+  ],
   "author": "huang.xinghui <huang.x.hui@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git@github.com:huang-x-h/jquery.async.git"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "jquery": "^3.1.0",
+    "mocha": "^2.5.3"
   }
 }
