@@ -100,4 +100,38 @@
 
     return defer.promise();
   };
+
+  /**
+   * wrapper value and return promise object
+   * @param {object} value
+   * @return {promise}
+   */
+  $.promisify = function(value) {
+    if (isDeferred(value)) {
+      return value;
+    }
+
+    var defer = $.Deferred();
+    defer.resolve(value);
+    return defer.promise();
+  };
+
+  /**
+   * Applies the function iteratee to each item in coll
+   * @param {array} coll coll a collection to iterate over
+   * @param {function} iteratee a function to apply to each item in coll and return a Promise object
+   * @return {promise}
+   */
+  $.asyncEach = function(coll, iteratee) {
+    var defer = $.Deferred();
+    $.when(coll.map(function(item, coll) {
+      return iteratee(item, coll);
+    })).done(function() {
+      defer.resolve(slice.call(arguments).map(function(item) {
+        return Array.isArray(item) ? item[0] : item;
+      }));
+    });
+
+    return defer.promise();
+  };
 }));

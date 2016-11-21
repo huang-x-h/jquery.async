@@ -66,3 +66,29 @@ describe('$.parallel', () => {
     });
   })
 });
+
+describe('$.promisify', () => {
+  it('common value test', () => {
+    return $.promisify('one').then((result) => {
+      expect(result).to.equal('one');
+    });
+  });
+
+  it('deferred value test', () => {
+    return $.promisify(fetchUrl('defer1.json')).then((result) => {
+      expect(result.name).to.equal('one');
+    });
+  })
+});
+
+describe('$.asyncEach', () => {
+  it('asyncEach test', () => {
+    $.asyncEach(['defer1.json', 'defer2.json', 'defer3.json'], (url) => {
+      return fetchUrl(url);
+    }).then((result) => {
+      expect(result[0].name).to.equal('one');
+      expect(result[1].name).to.equal('two');
+      expect(result[2].name).to.equal('three');
+    });
+  })
+});
