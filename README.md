@@ -1,5 +1,5 @@
 # jquery.async
-> add `$.series/$.parallel` function to control async flow in jquery
+> add utilities function to control async flow in jquery
 
 ## Usage
 
@@ -107,3 +107,11 @@ run as `$.series(...deferreds)`, but will set `initialValue` to first function a
 ### `$.parallel(...deferreds)`
 
 run deferreds collection of functions in parallel
+
+### `$.promisify(value)`
+
+wrapper value and return promise object
+
+### `$.asyncEach(coll, iteratee)`
+
+Applies the function iteratee to each item in coll`

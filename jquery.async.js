@@ -86,14 +86,7 @@
     var initDefer = $.Deferred();
     deferreds.reduce(function(prev, next) {
       return prev.then(function() {
-        var result = next.apply(null, slice.call(arguments));
-        if (isDeferred(result)) {
-          return result;
-        } else {
-          var newDefer = $.Deferred();
-          newDefer.resolve(result);
-          return newDefer.promise();
-        }
+          return next.apply(null, slice.call(arguments));;
       }, defer.reject);
     }, initDefer.promise()).then(defer.resolve, defer.reject);
     initDefer.resolve(initialValue);
