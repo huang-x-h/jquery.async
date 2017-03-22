@@ -1,4 +1,4 @@
-#Changelog
+# Changelog
 
 ## 2017-03-22
 - add `$.polling` method
