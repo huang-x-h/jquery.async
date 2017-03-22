@@ -32,6 +32,10 @@
   }
 
   /**
+   * @namespace $
+   */
+
+  /**
    * run deferreds collection of functions in parallel
    *
    * if deferred function success handler has more than one argument,
@@ -95,9 +99,14 @@
   };
 
   /**
-   * wrapper value and return promise object
+   * 包装对象返回 promise 对象
    * @param {object} value
    * @return {promise}
+   * @example
+   * 
+   * $.promisify(1).then(function(data) {
+   *   console.log(data); // 输出 1
+   * });
    */
   $.promisify = function(value) {
     if (isDeferred(value)) {
@@ -110,10 +119,21 @@
   };
 
   /**
-   * Applies the function iteratee to each item in coll
-   * @param {array} coll coll a collection to iterate over
-   * @param {function} iteratee a function to apply to each item in coll and return a Promise object
-   * @return {promise}
+   * 循环数组进行函数调用处理，返回各自调用结果
+   * @param {array} coll 循环数组
+   * @param {function} iteratee 调用函数，该函数即可以是普通函数，也可以是异步返回promise
+   * @return {promise} 返回promise对象，返回值是数组，为各自处理返回值
+   * @example
+   * 
+   * $.asyncEach([1, 2, 3], function(item, coll) {
+   *   var defer = $.Deferred();
+   *   setTimeout(function() {
+   *     defer.resolve(item + 1);
+   *   }, 100);
+   *   return defer.promise();
+   * }).then(function(data) {
+   *   console.log(data); //输出 2, 3, 4
+   * });
    */
   $.asyncEach = function(coll, iteratee) {
     var defer = $.Deferred();
@@ -136,7 +156,6 @@
    * @return {function} polling.start 启动轮询
    * @return {function} polling.end 结束轮询
    * @return {function} polling.times 返回轮询执行函数次数
-   * 
    * @example
    * 
    * var polling = $.polling(function() {
