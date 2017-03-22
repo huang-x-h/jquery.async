@@ -83,7 +83,7 @@ describe('$.promisify', () => {
 
 describe('$.asyncEach', () => {
   it('asyncEach test', () => {
-    $.asyncEach(['defer1.json', 'defer2.json', 'defer3.json'], (url) => {
+    return $.asyncEach(['defer1.json', 'defer2.json', 'defer3.json'], (url) => {
       return fetchUrl(url);
     }).then((result) => {
       expect(result[0].name).to.equal('one');
@@ -92,3 +92,51 @@ describe('$.asyncEach', () => {
     });
   })
 });
+
+describe('$.polling', () => {
+  it('polling test', (done) => {
+    let count = 1;
+    let polling = $.polling((step) => {
+      count += step;
+    }, 100, 2);
+
+    polling.start();
+
+    setTimeout(() => {
+      expect(count).to.equal(3);
+
+      setTimeout(() => {
+        polling.stop();
+        expect(count).to.equal(5);
+
+        setTimeout(() => {
+          expect(polling.times()).to.equal(2);
+          expect(count).to.equal(5);
+          done();
+        }, 100);
+      }, 110);
+    }, 100);
+  })
+
+  it('polling async test', (done) => {
+    let count = 1;
+    let polling = $.polling((step) => fetch('defer1.json').then(() => count += step), 100, 2);
+
+    polling.start();
+
+    setTimeout(() => {
+      expect(count).to.equal(3);
+
+      setTimeout(() => {
+        polling.stop();
+        expect(count).to.equal(5);
+
+        setTimeout(() => {
+          expect(polling.times()).to.equal(2);
+          expect(count).to.equal(5);
+          done();
+        }, 100);
+      }, 120);
+    }, 120);
+  })
+})

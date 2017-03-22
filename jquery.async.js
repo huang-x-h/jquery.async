@@ -28,7 +28,7 @@
   var slice = Array.prototype.slice;
 
   function isDeferred(obj) {
-    return typeof obj.promise === 'function';
+    return obj && typeof obj.promise === 'function';
   }
 
   /**
@@ -117,7 +117,7 @@
    */
   $.asyncEach = function(coll, iteratee) {
     var defer = $.Deferred();
-    $.when(coll.map(function(item, coll) {
+    $.when.apply(null, coll.map(function(item, coll) {
       return iteratee(item, coll);
     })).done(function() {
       defer.resolve(slice.call(arguments).map(function(item) {
@@ -127,4 +127,60 @@
 
     return defer.promise();
   };
+
+  /**
+   * 根据给定的时间和参数轮询执行函数
+   * @param {function} func 该函数即可以是普通函数，也可以是异步返回promise
+   * @param {number} wait 延长执行毫秒值
+   * @return {object} polling 返回轮询对象
+   * @return {function} polling.start 启动轮询
+   * @return {function} polling.end 结束轮询
+   * @return {function} polling.times 返回轮询执行函数次数
+   * 
+   * @example
+   * 
+   * var polling = $.polling(function() {
+   *   console.log('polling');
+   * }, 1000);
+   * 
+   * // 启动轮询
+   * polling.start();
+   * 
+   * //结束轮询
+   * polling.end();
+   * 
+   * // 查询轮询次数
+   * polling.times();
+   */
+  $.polling = function(func, wait) {
+    var args = slice.call(arguments, 2);
+    var timer, times = 0;
+
+    function startPolling() {
+      timer = setTimeout(function() {
+        times++;
+
+        $.promisify(func.apply(null, args)).then(function() {
+          if (timer) {
+            startPolling();
+          }
+        });
+      }, wait);
+    }
+
+    function stopPolliing() {
+      clearTimeout(timer);
+      timer = null;
+    }
+
+    function getTimes() {
+      return times;
+    }
+
+    return {
+      start: startPolling,
+      stop: stopPolliing,
+      times: getTimes
+    }
+  }
 }));

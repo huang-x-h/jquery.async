@@ -1,5 +1,8 @@
 #Changelog
 
+## 2017-03-22
+- add `$.polling` method
+
 ## 2016-11-21
 - `$.promisify` wrapper value and return promise object
 - `$.asyncEach` Applies the function iteratee to each item in coll
