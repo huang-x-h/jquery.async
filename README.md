@@ -8,110 +8,29 @@
 <script src="path/jquery.async.js"></script>
 ```
 
-```js
-$.series(defer1, defer2, defer3)
-or
-$.series([defer1, defer2, defer3])
-
-$.parallel(defer1, defer2, defer3)
-or
-$.parallel([defer1, defer2, defer3])
-```
-
-## Example
-
-### $.series(deferreds)
-
-```js
-function one() {
-  var defer = $.Deferred();
-  setTimeout(function() {
-    defer.resolve('one');
-  });
-  return defer.promise();
-}
-
-function two(one) {
-  console.log('function two input value is', one);
-  var defer = $.Deferred();
-  setTimeout(function() {
-    defer.resolve('two');
-  });
-  return defer.promise();
-}
-
-function three(two) {
-  console.log('functoin three input value is', two);
-  var defer = $.Deferred();
-  setTimeout(function() {
-    defer.resolve('three');
-  });
-  return defer.promise();
-}
-
-var defer = $.series(one, two, three);
-defer.then(function(result) {
-  console.log('result value is', result);
-});
-
-// output
-// function two input value is one
-// functoin three input value is two
-// result value is three
-```
-### $.parallel(deferreds)
-
-```js
-function one() {
-  var defer = $.Deferred();
-  setTimeout(function() {
-    defer.resolve('one');
-  });
-  return defer.promise();
-}
-
-function two() {
-  var defer = $.Deferred();
-  setTimeout(function() {
-    defer.resolve('two');
-  });
-  return defer.promise();
-}
-
-function three() {
-  var defer = $.Deferred();
-  setTimeout(function() {
-    defer.resolve('three');
-  });
-  return defer.promise();
-}
-
-var defer = $.parallel(one, two, three);
-defer.then(function(result) {
-  console.log('result value is', result);
-});
-
-// output
-// result value is ["one", "two", "three"]
-```
-
 ## API
 ### `$.series(...deferreds)`
 
-run deferreds collection of functions in series, each function consumes the return value of the previous function
+串行执行异步函数处理，每个函数会以前一个函数返回值作为入参
 
 ### `$.series([deferreds], initialValue)`
 
-run as `$.series(...deferreds)`, but will set `initialValue` to first function as arguments
+串行执行异步函数，提供第一个函数初始入参
 
 ### `$.parallel(...deferreds)`
 
-run deferreds collection of functions in parallel
+并行执行异步函数
 
 ### `$.promisify(value)`
 
-wrapper value and return promise object
+包装对象返回 promise 对象
 
 ### `$.asyncEach(coll, iteratee)`
 
-Applies the function iteratee to each item in coll`
+循环数组进行函数调用处理，返回各自调用结果
+
+### `$.polling(func, wait)`
+
+根据给定的时间和参数轮询执行函数
+
+## [Changelog](CHANGELOG.md)
