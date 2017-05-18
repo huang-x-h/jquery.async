@@ -74,11 +74,17 @@ describe('$.promisify', () => {
     });
   });
 
+  it('null value test', () => {
+    return $.promisify(null).then((result) => {
+      expect(result).to.equal(null);
+    });
+  });
+
   it('deferred value test', () => {
     return $.promisify(fetchUrl('defer1.json')).then((result) => {
       expect(result.name).to.equal('one');
     });
-  })
+  });
 });
 
 describe('$.asyncEach', () => {
@@ -120,7 +126,7 @@ describe('$.polling', () => {
 
   it('polling async test', (done) => {
     let count = 1;
-    let polling = $.polling((step) => fetch('defer1.json').then(() => count += step), 100, 2);
+    let polling = $.polling((step) => fetchUrl('defer1.json').then(() => count += step), 100, 2);
 
     polling.start();
 
