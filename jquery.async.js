@@ -1,10 +1,10 @@
-(function(factory) {
+(function (factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
     define(['jquery'], factory);
   } else if (typeof module === 'object' && module.exports) {
     // Node/CommonJS
-    module.exports = function(root, jQuery) {
+    module.exports = function (root, jQuery) {
       if (jQuery === undefined) {
         // require('jQuery') returns a factory that requires window to
         // build a jQuery instance, we normalize how we use modules
@@ -23,12 +23,16 @@
     // Browser globals
     factory(jQuery);
   }
-}(function($) {
+}(function ($) {
 
   var slice = Array.prototype.slice;
 
   function isDeferred(obj) {
     return obj && typeof obj.promise === 'function';
+  }
+
+  function isAjax(obj) {
+    return isDeferred(obj) && obj.hasOwnProperty('readyState');
   }
 
   /**
@@ -50,19 +54,23 @@
    *
    * @returns {promise}
    */
-  $.parallel = function(deferreds) {
+  $.parallel = function (deferreds) {
     if (!Array.isArray(deferreds)) {
       deferreds = slice.call(arguments);
     }
 
-    deferreds = deferreds.map(function(deferred) {
+    if (deferreds.length === 1) {
+      return deferreds[0]();
+    }
+
+    deferreds = deferreds.map(function (deferred) {
       return deferred();
     });
 
     var defer = $.Deferred();
-    $.when.apply(null, deferreds).done(function() {
-      defer.resolve(slice.call(arguments).map(function(item) {
-        return Array.isArray(item) ? item[0] : item;
+    $.when.apply(null, deferreds).done(function () {
+      defer.resolve(slice.call(arguments).map(function (item, index) {
+        return isAjax(deferreds[index]) ? item[0] : item;
       }));
     });
 
@@ -80,7 +88,7 @@
    *
    * @returns {promise}
    */
-  $.series = function(deferreds, initialValue) {
+  $.series = function (deferreds, initialValue) {
     if (!Array.isArray(deferreds)) {
       deferreds = slice.call(arguments);
       initialValue = '';
@@ -88,9 +96,9 @@
 
     var defer = $.Deferred();
     var initDefer = $.Deferred();
-    deferreds.reduce(function(prev, next) {
-      return prev.then(function() {
-          return next.apply(null, slice.call(arguments));
+    deferreds.reduce(function (prev, next) {
+      return prev.then(function () {
+        return next.apply(null, slice.call(arguments));
       }, defer.reject);
     }, initDefer.promise()).then(defer.resolve, defer.reject);
     initDefer.resolve(initialValue);
@@ -103,12 +111,12 @@
    * @param {object} value
    * @return {promise}
    * @example
-   * 
+   *
    * $.promisify(1).then(function(data) {
    *   console.log(data); // 输出 1
    * });
    */
-  $.promisify = function(value) {
+  $.promisify = function (value) {
     if (isDeferred(value)) {
       return value;
     }
@@ -124,7 +132,7 @@
    * @param {function} iteratee 调用函数，该函数即可以是普通函数，也可以是异步返回promise
    * @return {promise} 返回promise对象，返回值是数组，为各自处理返回值
    * @example
-   * 
+   *
    * $.asyncEach([1, 2, 3], function(item, coll) {
    *   var defer = $.Deferred();
    *   setTimeout(function() {
@@ -135,12 +143,12 @@
    *   console.log(data); //输出 2, 3, 4
    * });
    */
-  $.asyncEach = function(coll, iteratee) {
+  $.asyncEach = function (coll, iteratee) {
     var defer = $.Deferred();
-    $.when.apply(null, coll.map(function(item, coll) {
+    $.when.apply(null, coll.map(function (item, coll) {
       return iteratee(item, coll);
-    })).done(function() {
-      defer.resolve(slice.call(arguments).map(function(item) {
+    })).done(function () {
+      defer.resolve(slice.call(arguments).map(function (item) {
         return Array.isArray(item) ? item[0] : item;
       }));
     });
@@ -157,29 +165,29 @@
    * @return {function} polling.end 结束轮询
    * @return {function} polling.times 返回轮询执行函数次数
    * @example
-   * 
+   *
    * var polling = $.polling(function() {
    *   console.log('polling');
    * }, 1000);
-   * 
+   *
    * // 启动轮询
    * polling.start();
-   * 
+   *
    * //结束轮询
    * polling.end();
-   * 
+   *
    * // 查询轮询次数
    * polling.times();
    */
-  $.polling = function(func, wait) {
+  $.polling = function (func, wait) {
     var args = slice.call(arguments, 2);
     var timer, times = 0;
 
     function startPolling() {
-      timer = setTimeout(function() {
+      timer = setTimeout(function () {
         times++;
 
-        $.promisify(func.apply(null, args)).then(function() {
+        $.promisify(func.apply(null, args)).then(function () {
           if (timer) {
             startPolling();
           }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 2017-07-28
+- fixed `$.promisify` when only one param passed problem
+
 ## 2017-03-22
 - add `$.polling` method
 

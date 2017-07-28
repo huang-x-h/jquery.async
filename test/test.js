@@ -59,11 +59,30 @@ describe('$.parallel', () => {
       return fetchUrl('defer2.json');
     }, () => {
       return fetchUrl('defer3.json');
+    }, () => {
+      return $.promisify(['one', 'two']);
     }).then((result) => {
       expect(result[0].name).to.equal('one');
       expect(result[1].name).to.equal('two');
       expect(result[2].name).to.equal('three');
+      expect(result[3]).to.deep.equal(['one', 'two']);
     });
+  })
+
+  it('parallel single test', () => {
+    return $.parallel(() => {
+      return $.promisify(['one', 'two']);
+    }).then((result) => {
+      expect(result).to.deep.equal(['one', 'two']);
+    })
+  })
+
+  it('parallel single ajax test', () => {
+    return $.parallel(() => {
+      return fetchUrl('defer1.json');
+    }).then((result) => {
+      expect(result.name).to.equal('one');
+    })
   })
 });
 
