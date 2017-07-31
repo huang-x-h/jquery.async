@@ -60,7 +60,7 @@ describe('$.parallel', () => {
     }, () => {
       return fetchUrl('defer3.json');
     }, () => {
-      return $.promisify(['one', 'two']);
+      return ['one', 'two'];
     }).then((result) => {
       expect(result[0].name).to.equal('one');
       expect(result[1].name).to.equal('two');
