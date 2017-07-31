@@ -73,7 +73,7 @@ describe('$.parallel', () => {
     return $.parallel(() => {
       return $.promisify(['one', 'two']);
     }).then((result) => {
-      expect(result).to.deep.equal(['one', 'two']);
+      expect(result[0]).to.deep.equal(['one', 'two']);
     })
   })
 
@@ -81,7 +81,7 @@ describe('$.parallel', () => {
     return $.parallel(() => {
       return fetchUrl('defer1.json');
     }).then((result) => {
-      expect(result.name).to.equal('one');
+      expect(result[0].name).to.equal('one');
     })
   })
 });

@@ -59,19 +59,19 @@
       deferreds = slice.call(arguments);
     }
 
-    if (deferreds.length === 1) {
-      return deferreds[0]();
-    }
-
     deferreds = deferreds.map(function (deferred) {
       return deferred();
     });
 
     var defer = $.Deferred();
     $.when.apply(null, deferreds).done(function () {
-      defer.resolve(slice.call(arguments).map(function (item, index) {
-        return isAjax(deferreds[index]) ? item[0] : item;
-      }));
+      if (deferreds.length === 1) {
+        defer.resolve([arguments[0]]);
+      } else {
+        defer.resolve(slice.call(arguments).map(function (item, index) {
+          return isAjax(deferreds[index]) ? item[0] : item;
+        }));
+      }
     });
 
     return defer.promise();
