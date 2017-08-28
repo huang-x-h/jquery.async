@@ -162,7 +162,7 @@
    * @param {number} wait 延长执行毫秒值
    * @return {object} polling 返回轮询对象
    * @return {function} polling.start 启动轮询
-   * @return {function} polling.end 结束轮询
+   * @return {function} polling.stop 结束轮询
    * @return {function} polling.times 返回轮询执行函数次数
    * @example
    *
@@ -174,7 +174,7 @@
    * polling.start();
    *
    * //结束轮询
-   * polling.end();
+   * polling.stop();
    *
    * // 查询轮询次数
    * polling.times();
