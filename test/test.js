@@ -10,7 +10,7 @@ function fetchUrl(url) {
 }
 
 describe('$.series', () => {
-  it('series test', function() {
+  it('series test', function () {
     return $.series(() => {
       return fetchUrl('defer1.json');
     }, (result) => {
@@ -29,7 +29,7 @@ describe('$.series', () => {
       return fetchUrl('defer1.json');
     }, (result) => {
       expect(result.name).to.equal('one');
-      return {name: 'i am pure function'};
+      return { name: 'i am pure function' };
     }, (result) => {
       expect(result.name).to.equal('i am pure function');
       return fetchUrl('defer2.json');
@@ -45,7 +45,7 @@ describe('$.series', () => {
     }, (result) => {
       expect(result.name).to.equal('one');
       return fetchUrl('defer2.json');
-    }], {name: 'initialValue'}).then((result) => {
+    }], { name: 'initialValue' }).then((result) => {
       expect(result.name).to.equal('two');
     });
   });
@@ -57,15 +57,11 @@ describe('$.parallel', () => {
       return fetchUrl('defer1.json');
     }, () => {
       return fetchUrl('defer2.json');
-    }, () => {
-      return fetchUrl('defer3.json');
-    }, () => {
-      return ['one', 'two'];
-    }).then((result) => {
-      expect(result[0].name).to.equal('one');
-      expect(result[1].name).to.equal('two');
-      expect(result[2].name).to.equal('three');
-      expect(result[3]).to.deep.equal(['one', 'two']);
+    }, fetchUrl('defer3.json'), ['one', 'two']).then((v1, v2, v3, v4) => {
+      expect(v1.name).to.equal('one');
+      expect(v2.name).to.equal('two');
+      expect(v3.name).to.equal('three');
+      expect(v4).to.deep.equal(['one', 'two']);
     });
   })
 
@@ -73,7 +69,7 @@ describe('$.parallel', () => {
     return $.parallel(() => {
       return $.promisify(['one', 'two']);
     }).then((result) => {
-      expect(result[0]).to.deep.equal(['one', 'two']);
+      expect(result).to.deep.equal(['one', 'two']);
     })
   })
 
@@ -81,7 +77,7 @@ describe('$.parallel', () => {
     return $.parallel(() => {
       return fetchUrl('defer1.json');
     }).then((result) => {
-      expect(result[0].name).to.equal('one');
+      expect(result.name).to.equal('one');
     })
   })
 });

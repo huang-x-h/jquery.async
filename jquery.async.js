@@ -40,7 +40,7 @@
    */
 
   /**
-   * run deferreds collection of functions in parallel
+   * run deferreds collection of functions in parallel and return a promise that is fulfilled when all the items in the array are fulfilled
    *
    * if deferred function success handler has more than one argument,
    * it will only return the first argument
@@ -49,10 +49,12 @@
    * but users are focus the data returned from the server,
    * so we just return the first argument
    *
-   * @param {function} deferreds
-   * function return deferred
+   * @param {function|promise|object} deferreds
    *
    * @returns {promise}
+   *
+   * @example
+   *
    */
   $.parallel = function (deferreds) {
     if (!Array.isArray(deferreds)) {
@@ -60,15 +62,15 @@
     }
 
     deferreds = deferreds.map(function (deferred) {
-      return deferred();
+      return (typeof deferred == 'function') ? deferred() : deferred;
     });
 
     var defer = $.Deferred();
     $.when.apply(null, deferreds).done(function () {
       if (deferreds.length === 1) {
-        defer.resolve([arguments[0]]);
+        defer.resolve(arguments[0]);
       } else {
-        defer.resolve(slice.call(arguments).map(function (item, index) {
+        defer.resolve.apply(null, slice.call(arguments).map(function (item, index) {
           return isAjax(deferreds[index]) ? item[0] : item;
         }));
       }
@@ -107,7 +109,7 @@
   };
 
   /**
-   * 包装对象返回 promise 对象
+   * Return a promise that will wrap the given value
    * @param {object} value
    * @return {promise}
    * @example

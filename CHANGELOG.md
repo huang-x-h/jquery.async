@@ -1,5 +1,8 @@
 # Changelog
 
+## 2018-02-09
+- add `$.parallel` support value and promise object and change return array to multiple parameter
+
 ## 2017-07-28
 - fixed `$.promisify` when only one param passed problem
 
